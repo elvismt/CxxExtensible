@@ -22,6 +22,7 @@
 #include <memory>
 
 
+#if defined(__linux__) && defined(__GNUC__)
 ///
 /// \brief Macro to abstract declaration 'decorators'
 ///
@@ -30,7 +31,6 @@
 /// pick it from from the central system (in the simplest
 /// case 'extern "C"' will sifice) so we hide everything
 /// in this macro
-#if defined(__linux__) && defined(__GNUC__)
 # define MODULE_CREATION_FUNCTION \
     extern "C" modules::AbstractModule* __createModule__()
 #else
@@ -67,11 +67,17 @@ public:
   ~ModuleManager();
 
   std::unique_ptr<AbstractModule> loadModule(
-      const std::string &name, bool lazyLoad = true);
+      const std::string &libraryPath, bool lazyLoad = true);
 
 protected:
 
-  std::unordered_map<std::string,void*> _dllHandles;
+  struct ModuleEntry {
+    void *systemHandle;
+    std::string moduleName;
+    std::string libraryPath;
+  };
+
+  std::unordered_map<std::string,ModuleEntry> _modules;
 };
 }
 

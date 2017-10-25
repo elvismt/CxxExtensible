@@ -28,17 +28,17 @@
 namespace modules {
 
 ModuleManager::~ModuleManager() {
-  for (auto handle : _dllHandles) {
-    dlclose(handle.second);
+  for (auto entry : _modules) {
+    dlclose(entry.second.systemHandle);
   }
 }
 
 
 std::unique_ptr<AbstractModule>
-ModuleManager::loadModule(const std::string &moduleName, bool lazyLoad) {
+ModuleManager::loadModule(const std::string &libraryPath, bool lazyLoad) {
   void *handle = nullptr;
 
-  handle = dlopen(moduleName.c_str(), lazyLoad ? RTLD_LAZY : RTLD_NOW);
+  handle = dlopen(libraryPath.c_str(), lazyLoad ? RTLD_LAZY : RTLD_NOW);
   if (!handle) {
     throw std::runtime_error("Could not load module library");
   }
@@ -48,8 +48,14 @@ ModuleManager::loadModule(const std::string &moduleName, bool lazyLoad) {
     throw std::runtime_error("Could not find MODULE_CREATION_FUNCTION in library");
   }
 
-  _dllHandles.emplace(std::make_pair(moduleName, handle));
-  return std::unique_ptr<AbstractModule>(createModule());
+  auto module = createModule();
+  if (!module) {
+    throw std::runtime_error("Module creation failed");
+  }
+
+  _modules.emplace(std::make_pair(module->moduleName(),
+        ModuleEntry{handle, module->moduleName(), libraryPath}));
+  return std::unique_ptr<AbstractModule>(module);
 }
 }
 

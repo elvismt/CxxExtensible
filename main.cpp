@@ -17,7 +17,6 @@
  */
 
 #include <iostream>
-#include <memory>
 #include "modulemanager.hpp"
 
 int main() {
@@ -33,3 +32,4 @@ int main() {
 
   return 0;
 }
+

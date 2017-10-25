@@ -1,5 +1,5 @@
 #
-#  Example of a module-based architecture for C++ system on linux
+#  Example of a module-based architecture for C++ system
 #
 #  Copyright (C) 2017  Elvis Teixeira
 #
