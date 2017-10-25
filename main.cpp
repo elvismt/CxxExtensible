@@ -1,5 +1,5 @@
 /*
- * Example of a module-based architecture for C++ system on linux
+ * Example of a module-based architecture for a C++ system
  *
  * Copyright (C) 2017  Elvis Teixeira
  *
@@ -27,7 +27,7 @@ int main() {
 
   modules::ModuleManager moduleManager;
   std::unique_ptr<modules::AbstractModule> extension(
-        moduleManager.loadModule("./extension.so"));
+      moduleManager.loadModule("./extension.so"));
 
   std::cout << "Loaded module [" << extension->moduleName() << ']' << std::endl;
   std::cout << "Written by [" << extension->moduleAuthors() << ']' << std::endl;

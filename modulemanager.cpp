@@ -1,5 +1,5 @@
 /*
- * Example of a module-based architecture for C++ system on linux
+ * Example of a module-based architecture for a C++ system
  *
  * Copyright (C) 2017  Elvis Teixeira
  *
@@ -23,9 +23,9 @@
 namespace modules {
 
 ModuleManager::~ModuleManager() {
-    for (auto handle : dllHandles) {
-        dlclose(handle.second);
-    }
+  for (auto handle : _dllHandles) {
+    dlclose(handle.second);
+  }
 }
 
 
@@ -44,7 +44,7 @@ AbstractModule* ModuleManager::loadModule(const std::string &moduleName) {
     return nullptr;
   }
 
-  dllHandles.emplace(std::make_pair(moduleName, handle));
+  _dllHandles.emplace(std::make_pair(moduleName, handle));
   return createModule();
 }
 }

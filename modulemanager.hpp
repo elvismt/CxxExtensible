@@ -1,5 +1,5 @@
 /*
- * Example of a module-based architecture for C++ system on linux
+ * Example of a module-based architecture for a C++ system
  *
  * Copyright (C) 2017  Elvis Teixeira
  *
@@ -39,6 +39,8 @@ namespace modules {
 class AbstractModule {
 public:
 
+  virtual ~AbstractModule() {}
+
   virtual std::string moduleName() const = 0;
   virtual std::string moduleAuthors() const = 0;
 
@@ -63,6 +65,6 @@ public:
 
 protected:
 
-  std::unordered_map<std::string,void*> dllHandles;
+  std::unordered_map<std::string,void*> _dllHandles;
 };
 }

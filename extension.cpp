@@ -1,5 +1,5 @@
 /*
- * Example of a module-based architecture for C++ system on linux
+ * Example of a module-based architecture for a C++ system
  *
  * Copyright (C) 2017  Elvis Teixeira
  *
@@ -20,9 +20,6 @@
 
 namespace extension_module {
 
-///
-/// \brief Provides the extension module's functionality
-///
 /// The module must be a subclass of modules::AbstractModule
 /// or of some of it's subclasses. The base class must be
 /// picked from some system public header, where 'system' is
@@ -30,30 +27,21 @@ namespace extension_module {
 class ExtensionModule : public modules::AbstractModule {
 public:
 
-  ExtensionModule(const std::string &moduleName,
-              const std::string &authorName)
-    : _moduleName{moduleName}
-    , _authorName{authorName} {}
-
+  ExtensionModule() {}
 
   virtual std::string moduleName() const override {
-    return _moduleName;
+    return "ExtensionModule";
   }
   
   virtual std::string moduleAuthors() const override {
-    return _authorName;
+    return "Elvis Teixeira";
   }
 
-private:
-
-  std::string _moduleName;
-  std::string _authorName;
 };
 }
 
 
 /// This is the only function exported by the module
 MODULE_CREATION_FUNCTION {
-  return new extension_module::ExtensionModule(
-    "Extension Module", "Elvis Teixeira");
+  return new extension_module::ExtensionModule();
 }
