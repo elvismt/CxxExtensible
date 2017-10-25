@@ -19,6 +19,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 
 ///
@@ -29,8 +30,12 @@
 /// pick it from from the central system (in the simplest
 /// case 'extern "C"' will sifice) so we hide everything
 /// in this macro
-#define MODULE_CREATION_FUNCTION \
+#if defined(__linux__) && defined(__GNUC__)
+# define MODULE_CREATION_FUNCTION \
     extern "C" modules::AbstractModule* __createModule__()
+#else
+# error "CxxExtensible doesn\'t support your OS or compiler yet"
+#endif
 
 
 namespace modules {
@@ -43,7 +48,7 @@ public:
 
   virtual std::string moduleName() const = 0;
   virtual std::string moduleAuthors() const = 0;
-
+  virtual std::string moduleVersion() const = 0;
 };
 
 
@@ -61,10 +66,12 @@ public:
 
   ~ModuleManager();
 
-  AbstractModule* loadModule(const std::string &name);
+  std::unique_ptr<AbstractModule> loadModule(
+      const std::string &name, bool lazyLoad = true);
 
 protected:
 
   std::unordered_map<std::string,void*> _dllHandles;
 };
 }
+

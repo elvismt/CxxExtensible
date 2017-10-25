@@ -17,8 +17,13 @@
  */
 
 #include "modulemanager.hpp"
-#include <dlfcn.h>
-#include <iostream>
+#include <stdexcept>
+
+#if defined(__linux__) && defined(__GNUC__)
+# include <dlfcn.h>
+#else
+# error "CxxExtensible doesn\'t support your OS or compiler yet"
+#endif
 
 namespace modules {
 
@@ -29,22 +34,22 @@ ModuleManager::~ModuleManager() {
 }
 
 
-AbstractModule* ModuleManager::loadModule(const std::string &moduleName) {
+std::unique_ptr<AbstractModule>
+ModuleManager::loadModule(const std::string &moduleName, bool lazyLoad) {
   void *handle = nullptr;
 
-  handle = dlopen(moduleName.c_str(), RTLD_LAZY);
+  handle = dlopen(moduleName.c_str(), lazyLoad ? RTLD_LAZY : RTLD_NOW);
   if (!handle) {
-    std::cout << "Error loading library " << moduleName << std::endl;
-    return nullptr;
+    throw std::runtime_error("Could not load module library");
   }
 
   auto createModule = (CreateModuleFunction) dlsym(handle, "__createModule__");
   if (!createModule) {
-    std::cout << "Error loading createModule() from module " << moduleName << std::endl;
-    return nullptr;
+    throw std::runtime_error("Could not find MODULE_CREATION_FUNCTION in library");
   }
 
   _dllHandles.emplace(std::make_pair(moduleName, handle));
-  return createModule();
+  return std::unique_ptr<AbstractModule>(createModule());
 }
 }
+

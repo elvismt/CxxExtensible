@@ -26,8 +26,7 @@ int main() {
   // at runtime :)
 
   modules::ModuleManager moduleManager;
-  std::unique_ptr<modules::AbstractModule> extension(
-      moduleManager.loadModule("./extension.so"));
+  auto extension = moduleManager.loadModule("./extension.so");
 
   std::cout << "Loaded module [" << extension->moduleName() << ']' << std::endl;
   std::cout << "Written by [" << extension->moduleAuthors() << ']' << std::endl;

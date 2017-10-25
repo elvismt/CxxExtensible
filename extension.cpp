@@ -37,6 +37,9 @@ public:
     return "Elvis Teixeira";
   }
 
+  virtual std::string moduleVersion() const override {
+    return "1.0.0";
+  }
 };
 }
 
